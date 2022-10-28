@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:wmdb
+    username: admin
+    password: password2
+    driverClassName: org.h2.Driver
+  jpa:
+    hibernate.ddl-auto: none
+  h2:
+    console.enabled: true
