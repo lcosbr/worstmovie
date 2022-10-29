@@ -1,5 +1,8 @@
 package com.oliveira.worstmovie.domain;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -7,6 +10,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="MOVIES")
+@Getter
+@Setter
+@EqualsAndHashCode
 public class Movie {
 
     @Id
