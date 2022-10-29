@@ -59,8 +59,13 @@ To run the integration tests, run the following command
 
 ## Test Specification
 
-[Backend Specification]()
+[Backend Specification](https://github.com/lcosbr/worstmovie/blob/master/Especifica%C3%A7%C3%A3o%20Backend.pdf)
 
+
+## Screenshots
+
+### Request
+![img.png](request.png)
 
 ## Authors
 
