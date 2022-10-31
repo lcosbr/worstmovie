@@ -2,7 +2,6 @@
 # Worst Movie API
 API RESTful that reads a list of the winners and nominees from the Worst Movie category of the Golden Raspberry Awards.
 
-
 ## Installation and Run
 
 Clone the project
@@ -29,7 +28,6 @@ Start the server
   mvnw spring-boot:run
 ```
 
-
 ## API Reference
 
 #### Get the producer with the bigger interval and with the lower interval between two consecutive awards.
@@ -37,7 +35,7 @@ Start the server
 Running on default port: 8080
 
 ```http localhost
-  GET /interval
+  GET /movies/interval
 ```
 
 ## Running Tests

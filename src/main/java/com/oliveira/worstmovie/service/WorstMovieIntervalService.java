@@ -25,18 +25,27 @@ import java.util.regex.Pattern;
 import static com.oliveira.worstmovie.util.AppConstants.ERROR_POPULATING_PRIZE_INTERVAL_LIST;
 import static com.oliveira.worstmovie.util.AppConstants.ERROR_RETRIEVING_MOVIES_LIST;
 import static com.oliveira.worstmovie.util.AppConstants.FINISHED_PROCESS;
+import static com.oliveira.worstmovie.util.AppConstants.MAX;
+import static com.oliveira.worstmovie.util.AppConstants.MIN;
 import static com.oliveira.worstmovie.util.AppConstants.SEPARATOR_REGEX;
 import static com.oliveira.worstmovie.util.AppConstants.STARTED_PROCESS;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class WorstMovieService {
+public class WorstMovieIntervalService {
 
+    private final static String GET_ALL_MOVIES = "Winner Interval";
     private final MoviesRepository moviesRepository;
 
+
+    /**
+     * Process method that will process the list of movies and process winner interval
+     *
+     * @return resultMap converted to Json
+     */
     public Object process(){
-        log.info(STARTED_PROCESS);
+        log.info(STARTED_PROCESS, GET_ALL_MOVIES);
         Set<Movie> moviesList = new LinkedHashSet<>();
         try {
             // Load only movies with Prizes and Split Producer Names
@@ -57,12 +66,20 @@ public class WorstMovieService {
 
         // Adding Results to a map
         Map<String, List<PrizeInterval>> resultMap = new HashMap<>();
-        resultMap.put("min", minPrizeIntervalList);
-        resultMap.put("max", maxPrizeIntervalList);
+        resultMap.put(MIN, minPrizeIntervalList);
+        resultMap.put(MAX, maxPrizeIntervalList);
         log.info(FINISHED_PROCESS);
         return new Gson().toJson(resultMap);
     }
 
+
+    /**
+     * Method that will populate the prize interval set
+     *
+     * @param movie movie object in evidence
+     * @param processList the list that will be processed
+     * @param prizeIntervalList the set that will receive the prize interval objects
+     */
     private void populatePrizeInterval(Movie movie, List<Movie> processList, Set<PrizeInterval> prizeIntervalList){
         try {
             processList.remove(movie);
@@ -89,6 +106,13 @@ public class WorstMovieService {
         }
     }
 
+
+    /**
+     * This method will get the min interval from the prize interval set
+     *
+     * @param prizeIntervalList prize interval set
+     * @return arrayList of the min intervals found
+     */
     private ArrayList<PrizeInterval> getMinInterval(Set<PrizeInterval> prizeIntervalList){
         final Optional<PrizeInterval> optPrizeInterval = prizeIntervalList.stream()
                 .filter(p -> p.getInterval() > 0)
@@ -96,6 +120,12 @@ public class WorstMovieService {
         return addIntervalOnList(optPrizeInterval, prizeIntervalList);
     }
 
+    /**
+     * This method will get the max interval from the prize interval set.
+     *
+     * @param prizeIntervalList prize interval set
+     * @return arrayList of the max intervals found
+     */
     private ArrayList<PrizeInterval> getMaxInterval(Set<PrizeInterval> prizeIntervalList){
         final Optional<PrizeInterval> optPrizeInterval = prizeIntervalList.stream()
                 .filter(p -> p.getInterval() > 0)
@@ -103,6 +133,13 @@ public class WorstMovieService {
         return addIntervalOnList(optPrizeInterval, prizeIntervalList);
     }
 
+    /**
+     * This method will add the interval on the set
+     *
+     * @param optPrizeInterval optional object of prize interval
+     * @param prizeIntervalList prize interval set
+     * @return newPrizeIntervalList arrayList of the intervals found
+     */
     private ArrayList<PrizeInterval> addIntervalOnList(final Optional<PrizeInterval> optPrizeInterval,
                                                        Set<PrizeInterval> prizeIntervalList){
         final PrizeInterval prizeInterval;
@@ -117,12 +154,24 @@ public class WorstMovieService {
         return newPrizeIntervalList;
     }
 
+    /**
+     * This method will execute a regex to see if the producer field has more than one producer
+     *
+     * @param producer producer in evidence
+     * @return boolean matching regex
+     */
     private boolean checkMoreThanOneProducer(final String producer){
         final Pattern pattern = Pattern.compile(SEPARATOR_REGEX, Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(producer);
         return matcher.find();
     }
 
+    /**
+     * This method will split the producers from the producer field
+     *
+     * @param movie object in evidence
+     * @param moviesList movielist set
+     */
     private void splitProducers(Movie movie, Set<Movie> moviesList){
         if(checkMoreThanOneProducer(movie.getProducers())){
             List<String> producers = Arrays.asList(movie.getProducers().split(SEPARATOR_REGEX));
@@ -132,7 +181,14 @@ public class WorstMovieService {
         }
     }
 
-    private void duplicateMovie(final String splitedProducer, Movie movie, Set<Movie> moviesList){
-        moviesList.add(MovieUtils.movieCreate(movie, splitedProducer));
+    /**
+     * This method will duplicate the object movie with a separated producer
+     *
+     * @param splittedProducer split producer
+     * @param movie movie in evidence
+     * @param moviesList movies set
+     */
+    private void duplicateMovie(final String splittedProducer, Movie movie, Set<Movie> moviesList){
+        moviesList.add(MovieUtils.movieCreate(movie, splittedProducer));
     }
 }
