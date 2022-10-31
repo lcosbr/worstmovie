@@ -34,7 +34,7 @@ Start the server
 
 Running on default port: 8080
 
-```http localhost
+```http
   GET /movies/interval
 ```
 
